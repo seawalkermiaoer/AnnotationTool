@@ -20,7 +20,7 @@ class QuestionListCtrl(wx.ListCtrl):
         self.subDatas = datas
         for index in range(len(self.subDatas)):
             subject = self.subDatas[index]
-            content = u"科目：{0} 科目介绍：{1}".format(subject.get('name', ''), subject.get('intro', ''))
+            content = subject.get('simques', '')
             self.InsertItem(index, content, 0)
 
     def refreshDataShow(self, newDatas):

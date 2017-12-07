@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import requests
 from lxml import etree
 import logging
@@ -62,4 +64,4 @@ def getQuestion(question):
 
 if __name__ == '__main__':
     result = getQuestion('兰迪学科英语服务怎么样?')
-    print(result)
+    pprint(result)

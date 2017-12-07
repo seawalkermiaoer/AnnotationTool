@@ -1,15 +1,33 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import wx
+import configparser
 
+import wx
+import os
+
+from copy import deepcopy
+
+from getBaiduZhidao import getQuestion
 from question_list_ctrl import QuestionListCtrl
 
 
-class TagFrame(wx.Frame):
-    """
-    """
+wildcard = u"文本 文件 (*.txt)|*.dat| All files (*.*)|*.*"
 
+
+class TagFrame(wx.Frame):
     def __init__(self, *args, **kw):
+        # 读取上一次进度
+        self.cf = configparser.ConfigParser()
+        if os.path.exists('status.ini'):
+            self.cf.read('status.ini')
+        self.input_path = str(self.cf.get('default', 'last_path')).replace('\\', '/', -1)
+        self.size = int(self.cf.get('default', 'size'))
+        self.done_index = int(self.cf.get('default', 'done_index'))
+        print(self.done_index, self.size, self.input_path)
+
+        self.candidate_ques = []
+        self.done_ques = []
+
         # ensure the parent's __init__ is called
         super(TagFrame, self).__init__(*args, **kw)
         self.Center()
@@ -18,31 +36,62 @@ class TagFrame(wx.Frame):
 
         self.s1_tips = wx.StaticText(self.panel, 0, u"文件路径:", style=wx.TE_LEFT)
         self.s1_filename = wx.TextCtrl(self.panel, style=wx.TE_LEFT)
+        self.s1_filename.SetEditable(False)
         self.s1_open = wx.Button(self.panel, label=u'打开')
+        # 绑定打开文件对话框事件
+        self.Bind(wx.EVT_BUTTON, self.OnOpen, self.s1_open)
 
         self.s2_tips = wx.StaticText(self.panel, 0, u"用户问题:", style=wx.TE_LEFT)
         self.s2_question = wx.TextCtrl(self.panel, style=wx.TE_LEFT)
+        self.s2_question.SetEditable(False)
 
-        courseNames = [u'大学物理', u'计算机技术', u'微积分', u'电力电子']
-        courseDatas = []
-        for index in range(len(courseNames)):
-            obj = {}
-            obj['name'] = courseNames[index]
-            obj['intro'] = courseNames[index] + u'的简介......'
-            courseDatas.append(obj)
-
-        self.s3_candidate_ques = QuestionListCtrl(self.panel, courseDatas, size=(500, 600))
-        self.s3_tips = wx.StaticText(self.panel, 0, u"-->", style=wx.TE_LEFT)
-        self.s3_sim_ques = QuestionListCtrl(self.panel, courseDatas, size=(500, 600))
+        self.s3_candidate_ques = QuestionListCtrl(self.panel, [], size=(500, 600))
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnCanClick, self.s3_candidate_ques)
+        self.s3_tips = wx.StaticText(self.panel, 0, u"--->", style=wx.TE_LEFT)
+        self.s3_sim_ques = QuestionListCtrl(self.panel, [], size=(500, 600))
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSimClick, self.s3_sim_ques)
 
         self.s4_tips = wx.StaticText(self.panel, 0, u"当前进度:", style=wx.TE_LEFT)
         self.s4_progress = wx.StaticText(self.panel, 0, u"1/1000", style=wx.TE_LEFT)
         self.s4_next = wx.Button(self.panel, label=u'下一个问题')
+        self.Bind(wx.EVT_BUTTON, self.OnNext, self.s4_next)
 
-        self.makeMenuBar()
+        # self.makeMenuBar()
         self.makeWorkspace()
         self.CreateStatusBar()
         self.SetStatusText("邂智科技")
+
+        # 上一次标注是否完成，如果未完成，则自动初始化
+        if self.input_path and os.path.exists(self.input_path) and self.size > 0 and self.done_index < self.size:
+            # 初始化
+            print('自动填充内容...')
+            # 填充文件路径
+            self.s1_filename.SetLabelText(self.input_path)
+            # 填充进度内容
+            self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
+            with open(self.input_path, 'r', encoding='utf-8') as fi:
+                self.todo_questions = [i.strip('\n') for i in fi.readlines()]
+            self.todo_index = self.done_index - 1
+            if self.todo_index < 0:
+                self.todo_index = 0
+            # 填充问题区
+            self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
+            self.do_search(self.s2_question.GetLabelText())
+
+    def do_search(self, question):
+        self.done_ques = []
+        rsp = getQuestion(question=question)
+        if rsp['issuccess'] and len(rsp['data']) > 0:
+            self.candidate_ques = rsp['data']
+            for i in rsp['data']:
+                tmp = deepcopy(i)
+                tmp['simques'] = ""
+                self.done_ques.append(tmp)
+            self.f5_dlist()
+
+    def f5_dlist(self):
+        self.s3_candidate_ques.refreshDataShow(self.candidate_ques)
+        self.s3_sim_ques.refreshDataShow(self.done_ques)
 
     def makeWorkspace(self):
         s1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -90,12 +139,52 @@ class TagFrame(wx.Frame):
         self.Close(True)
 
     def OnOpen(self, event):
-        pass
+        dlg = wx.FileDialog(self, u"选择待标注文件", style=wx.DD_DEFAULT_STYLE)
+        if dlg.ShowModal() == wx.ID_OK:
+            print(dlg.GetPath())  # 文件路径
+            self.s1_filename.SetLabelText(dlg.GetPath())
+        dlg.Destroy()
+
+    def OnNext(self, event):
+        # TODO 保存
+        print(self.todo_index, self.done_index)
+        self.done_index += 1
+        self.todo_index += 1
+        print(self.todo_index, self.done_index)
+        if self.done_index + 1 > self.size:
+            # TODO 弹出提示对话框，保存到文件 & 清空控件信息
+            print('DONE!')
+            dlg = wx.FileDialog(self, u"保存标注结果", style=wx.DD_DEFAULT_STYLE)
+            if dlg.ShowModal() == wx.ID_OK:
+                print(dlg.GetPath())  # 文件路径
+                # TODO 保存结果
+
+            dlg.Destroy()
+        else:
+            self.do_search(self.todo_questions[self.todo_index])
+            self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
+
+
+    def OnCanClick(self, event):
+        text = event.GetText()
+        id = event.GetIndex()
+        print(id, text)
+        if text:
+            self.done_ques[id]['simques'] = text
+            self.candidate_ques[id]['simques'] = ""
+            self.f5_dlist()
+
+    def OnSimClick(self, event):
+        text = event.GetText()
+        id = event.GetIndex()
+        print(id, text)
+        if text:
+            self.candidate_ques[id]['simques'] = text
+            self.done_ques[id]['simques'] = ""
+            self.f5_dlist()
 
 
 if __name__ == '__main__':
-    # When this module is run (not imported) then create the app, the
-    # frame, show it, and start the event loop.
     app = wx.App()
     frm = TagFrame(None, title='相似问句标注工具', size=(1200, 900))
     frm.Show()
