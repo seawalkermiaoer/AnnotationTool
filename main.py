@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import configparser
+import json
+from pprint import pprint
 
 import wx
 import os
@@ -57,7 +59,6 @@ class TagFrame(wx.Frame):
         self.makeWorkspace()
         self.CreateStatusBar()
         self.SetStatusText("邂智科技")
-
         # 上一次标注是否完成，如果未完成，则自动初始化
         print(self.size, self.done_index)
         if self.input_path and os.path.exists(self.input_path) and self.size > 0 and self.done_index < self.size:
@@ -69,7 +70,7 @@ class TagFrame(wx.Frame):
             self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
             with open(self.input_path, 'r', encoding='utf-8') as fi:
                 self.todo_questions = [i.strip('\n') for i in fi.readlines()]
-            self.todo_index = self.done_index - 1
+            self.todo_index = self.done_index
             if self.todo_index < 0:
                 self.todo_index = 0
             # 填充问题区
@@ -117,9 +118,18 @@ class TagFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnOpen, openItem)
         self.Bind(wx.EVT_MENU, self.OnExit,  exitItem)
 
-    def OnExit(self, event):
+    def OnExit(self):
+        print('exit')
         """Close the frame, terminating the application."""
-        self.Close(True)
+        with open('status.ini', 'w') as configfile:
+            if 'default' not in self.cf.sections():
+                self.cf.add_section('default')
+            self.cf['default'] = {
+                'last_path': self.input_path,
+                'size': str(self.size),
+                'done_index': str(self.done_index)
+            }
+            self.cf.write(configfile)
 
     def OnOpen(self, event):
         dlg = wx.FileDialog(self, u"选择待标注文件", style=wx.DD_DEFAULT_STYLE)
@@ -131,6 +141,12 @@ class TagFrame(wx.Frame):
 
     def OnNext(self, event):
         # TODO 保存当前标注结果
+        with open('tmp.txt', mode='a+', encoding='utf-8') as fo:
+            fo.write(json.dumps({
+                "uq": self.s2_question.GetLabelText(),
+                "hit": [i for i in self.done_ques if i['simques']],
+                "nhit":[i for i in self.candidate_ques if i['simques']],
+            }, ensure_ascii=False) + '\n')
         self.done_index += 1
         self.todo_index += 1
         if self.done_index + 1 > self.size:
@@ -138,6 +154,7 @@ class TagFrame(wx.Frame):
             wx.MessageDialog(self, "恭喜你", caption="Message box",style=wx.OK, pos=wx.DefaultPosition).ShowModal()
             self.clear()
         else:
+            self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
             self.do_search(self.todo_questions[self.todo_index])
             self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
 
@@ -200,8 +217,20 @@ class TagFrame(wx.Frame):
         self.s3_sim_ques.refreshDataShow(self.done_ques)
 
 
+class TApp(wx.App):
+
+    def OnInit(self):
+        frm = TagFrame(None, title='相似问句标注工具', size=(1200, 900))
+        self.frm = frm
+        self.frm.Show()
+        self.SetTopWindow(self.frm)
+        return 1
+
+    def OnExit(self):
+        self.frame.OnExit()
+        return 0
+
+
 if __name__ == '__main__':
-    app = wx.App()
-    frm = TagFrame(None, title='相似问句标注工具', size=(1200, 900))
-    frm.Show()
+    app = TApp()
     app.MainLoop()
