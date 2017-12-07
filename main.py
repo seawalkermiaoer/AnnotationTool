@@ -11,9 +11,6 @@ from getBaiduZhidao import getQuestion
 from question_list_ctrl import QuestionListCtrl
 
 
-wildcard = u"文本 文件 (*.txt)|*.dat| All files (*.*)|*.*"
-
-
 class TagFrame(wx.Frame):
     def __init__(self, *args, **kw):
         # 读取上一次进度
@@ -62,6 +59,7 @@ class TagFrame(wx.Frame):
         self.SetStatusText("邂智科技")
 
         # 上一次标注是否完成，如果未完成，则自动初始化
+        print(self.size, self.done_index)
         if self.input_path and os.path.exists(self.input_path) and self.size > 0 and self.done_index < self.size:
             # 初始化
             print('自动填充内容...')
@@ -77,21 +75,6 @@ class TagFrame(wx.Frame):
             # 填充问题区
             self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
             self.do_search(self.s2_question.GetLabelText())
-
-    def do_search(self, question):
-        self.done_ques = []
-        rsp = getQuestion(question=question)
-        if rsp['issuccess'] and len(rsp['data']) > 0:
-            self.candidate_ques = rsp['data']
-            for i in rsp['data']:
-                tmp = deepcopy(i)
-                tmp['simques'] = ""
-                self.done_ques.append(tmp)
-            self.f5_dlist()
-
-    def f5_dlist(self):
-        self.s3_candidate_ques.refreshDataShow(self.candidate_ques)
-        self.s3_sim_ques.refreshDataShow(self.done_ques)
 
     def makeWorkspace(self):
         s1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -144,28 +127,26 @@ class TagFrame(wx.Frame):
             print(dlg.GetPath())  # 文件路径
             self.s1_filename.SetLabelText(dlg.GetPath())
         dlg.Destroy()
+        # 检测
 
     def OnNext(self, event):
-        # TODO 保存
-        print(self.todo_index, self.done_index)
+        # TODO 保存当前标注结果
         self.done_index += 1
         self.todo_index += 1
-        print(self.todo_index, self.done_index)
         if self.done_index + 1 > self.size:
-            # TODO 弹出提示对话框，保存到文件 & 清空控件信息
-            print('DONE!')
-            dlg = wx.FileDialog(self, u"保存标注结果", style=wx.DD_DEFAULT_STYLE)
-            if dlg.ShowModal() == wx.ID_OK:
-                print(dlg.GetPath())  # 文件路径
-                # TODO 保存结果
-
-            dlg.Destroy()
+            # 清空控件信息
+            wx.MessageDialog(self, "恭喜你", caption="Message box",style=wx.OK, pos=wx.DefaultPosition).ShowModal()
+            self.clear()
         else:
             self.do_search(self.todo_questions[self.todo_index])
             self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
 
-
     def OnCanClick(self, event):
+        """
+        候选相似问题被双击
+        :param event:
+        :return:
+        """
         text = event.GetText()
         id = event.GetIndex()
         print(id, text)
@@ -175,6 +156,11 @@ class TagFrame(wx.Frame):
             self.f5_dlist()
 
     def OnSimClick(self, event):
+        """
+        已经标注了的相似问题被双击
+        :param event:
+        :return:
+        """
         text = event.GetText()
         id = event.GetIndex()
         print(id, text)
@@ -182,6 +168,36 @@ class TagFrame(wx.Frame):
             self.candidate_ques[id]['simques'] = text
             self.done_ques[id]['simques'] = ""
             self.f5_dlist()
+
+    def do_search(self, question):
+        self.done_ques = []
+        rsp = getQuestion(question=question)
+        if rsp['issuccess'] and len(rsp['data']) > 0:
+            self.candidate_ques = rsp['data']
+            for i in rsp['data']:
+                tmp = deepcopy(i)
+                tmp['simques'] = ""
+                self.done_ques.append(tmp)
+            self.f5_dlist()
+
+    def clear(self):
+        """
+        清空数据 和 标注状态
+        :return:
+        """
+        self.candidate_ques = []
+        self.done_ques = []
+        self.size = 0
+        self.done_index = 0
+        self.todo_index = 0
+        self.s1_filename.SetLabelText("")
+        self.s2_question.SetLabelText("")
+        self.f5_dlist()
+        self.s4_progress.SetLabelText("0/0")
+
+    def f5_dlist(self):
+        self.s3_candidate_ques.refreshDataShow(self.candidate_ques)
+        self.s3_sim_ques.refreshDataShow(self.done_ques)
 
 
 if __name__ == '__main__':
