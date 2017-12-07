@@ -13,6 +13,15 @@ from getBaiduZhidao import getQuestion
 from question_list_ctrl import QuestionListCtrl
 
 
+def gen_out_path(path):
+    b = path.split('/', -1)
+    c = []
+    [c.append(i) for i in b[0: len(b) - 2]]
+    c.append('output')
+    c.append('done_' + b[-1])
+    return '/'.join(c)
+
+
 class TagFrame(wx.Frame):
     def __init__(self, *args, **kw):
         # 读取上一次进度
@@ -134,14 +143,24 @@ class TagFrame(wx.Frame):
     def OnOpen(self, event):
         dlg = wx.FileDialog(self, u"选择待标注文件", style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
-            print(dlg.GetPath())  # 文件路径
+            self.clear()
+            self.input_path = dlg.GetPath()
             self.s1_filename.SetLabelText(dlg.GetPath())
         dlg.Destroy()
         # 检测
+        with open(self.input_path, 'r', encoding='utf-8') as fi:
+            self.todo_questions = [i.strip('\n') for i in fi.readlines()]
+            self.size = len(self.todo_questions)
+            if self.size > 0:
+                self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
+                # 填充问题区
+                self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
+                self.do_search(self.s2_question.GetLabelText())
+                self.f5_dlist()
 
     def OnNext(self, event):
         # TODO 保存当前标注结果
-        with open('tmp.txt', mode='a+', encoding='utf-8') as fo:
+        with open(gen_out_path(self.input_path), mode='a+', encoding='utf-8') as fo:
             fo.write(json.dumps({
                 "uq": self.s2_question.GetLabelText(),
                 "hit": [i for i in self.done_ques if i['simques']],
@@ -227,7 +246,7 @@ class TApp(wx.App):
         return 1
 
     def OnExit(self):
-        self.frame.OnExit()
+        self.frm.OnExit()
         return 0
 
 
