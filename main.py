@@ -144,8 +144,8 @@ class TagFrame(wx.Frame):
         dlg = wx.FileDialog(self, u"选择待标注文件", style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
             self.clear()
-            self.input_path = dlg.GetPath()
-            self.s1_filename.SetLabelText(dlg.GetPath())
+            self.input_path = dlg.GetPath().replace('\\', '/', -1)
+            self.s1_filename.SetLabelText(dlg.GetPath().replace('\\', '/', -1))
         dlg.Destroy()
         # 检测
         with open(self.input_path, 'r', encoding='utf-8') as fi:
