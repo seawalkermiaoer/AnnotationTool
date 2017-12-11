@@ -81,14 +81,16 @@ class TagFrame(wx.Frame):
             with open(self.input_path, 'r', encoding='utf-8') as fi:
                 for i in fi.readlines():
                     tmp = json.loads(i.strip('\n'), encoding='utf-8')
-                    self.todo_questions.append(tmp['question'])
+                    self.todo_questions.append(tmp)
 
             self.todo_index = self.done_index
             if self.todo_index < 0:
                 self.todo_index = 0
             # 填充问题区
-            self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
-            self.do_search(self.s2_question.GetLabelText())
+            self.s2_question.SetLabelText(self.todo_questions[self.todo_index]['question'])
+            self.do_search(self.todo_index)
+
+
 
     def makeWorkspace(self):
         s1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -156,14 +158,13 @@ class TagFrame(wx.Frame):
 
             for i in fi.readlines():
                 tmp = json.loads(i.strip('\n'), encoding='utf-8')
-                self.todo_questions.append(tmp['question'])
+                self.todo_questions.append(tmp)
 
             self.size = len(self.todo_questions)
             if self.size > 0:
                 self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
                 # 填充问题区
-                self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
-                self.do_search(self.s2_question.GetLabelText())
+                self.s2_question.SetLabelText(self.todo_questions[self.todo_index]['question'])
                 self.f5_dlist()
 
     def OnNext(self, event):
@@ -181,8 +182,8 @@ class TagFrame(wx.Frame):
             wx.MessageDialog(self, "恭喜你", caption="Message box",style=wx.OK, pos=wx.DefaultPosition).ShowModal()
             self.clear()
         else:
-            self.s2_question.SetLabelText(self.todo_questions[self.todo_index])
-            self.do_search(self.todo_questions[self.todo_index])
+            self.s2_question.SetLabelText(self.todo_questions[self.todo_index]['question'])
+            self.do_search(self.todo_index)
             self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
 
     def OnCanClick(self, event):
@@ -213,9 +214,9 @@ class TagFrame(wx.Frame):
             self.done_ques[id]['simques'] = ""
             self.f5_dlist()
 
-    def do_search(self, question):
+    def do_search(self, todo_index):
         self.done_ques = []
-        rsp = getQuestion(question=question)
+        rsp = self.todo_questions[todo_index]
         if rsp['issuccess'] and len(rsp['data']) > 0:
             self.candidate_ques = rsp['data']
             for i in rsp['data']:
