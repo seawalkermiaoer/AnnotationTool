@@ -155,7 +155,8 @@ class TagFrame(wx.Frame):
         dlg.Destroy()
         # 检测
         with open(self.input_path, 'r', encoding='utf-8') as fi:
-
+            self.todo_questions = []
+            self.todo_index = 0
             for i in fi.readlines():
                 tmp = json.loads(i.strip('\n'), encoding='utf-8')
                 self.todo_questions.append(tmp)
@@ -165,6 +166,7 @@ class TagFrame(wx.Frame):
                 self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
                 # 填充问题区
                 self.s2_question.SetLabelText(self.todo_questions[self.todo_index]['question'])
+                self.do_search(self.todo_index)
                 self.f5_dlist()
 
     def OnNext(self, event):
