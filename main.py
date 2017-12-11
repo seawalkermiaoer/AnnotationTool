@@ -24,6 +24,7 @@ def gen_out_path(path):
 
 class TagFrame(wx.Frame):
     def __init__(self, *args, **kw):
+        self.todo_questions = []
         # 读取上一次进度
         self.cf = configparser.ConfigParser()
         if os.path.exists('status.ini'):
@@ -78,7 +79,10 @@ class TagFrame(wx.Frame):
             # 填充进度内容
             self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
             with open(self.input_path, 'r', encoding='utf-8') as fi:
-                self.todo_questions = [i.strip('\n') for i in fi.readlines()]
+                for i in fi.readlines():
+                    tmp = json.loads(i.strip('\n'), encoding='utf-8')
+                    self.todo_questions.append(tmp['question'])
+
             self.todo_index = self.done_index
             if self.todo_index < 0:
                 self.todo_index = 0
@@ -149,7 +153,11 @@ class TagFrame(wx.Frame):
         dlg.Destroy()
         # 检测
         with open(self.input_path, 'r', encoding='utf-8') as fi:
-            self.todo_questions = [i.strip('\n') for i in fi.readlines()]
+
+            for i in fi.readlines():
+                tmp = json.loads(i.strip('\n'), encoding='utf-8')
+                self.todo_questions.append(tmp['question'])
+
             self.size = len(self.todo_questions)
             if self.size > 0:
                 self.s4_progress.SetLabelText('%d/%d' % (self.done_index, self.size))
