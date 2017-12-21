@@ -8,3 +8,7 @@ status.ini
 .idea/workspace.xml
 __pycache__/question_list_ctrl.cpython-36.pyc
 *.pyc
+*.xml
+*.xml
+/__pycache__
+/.idea

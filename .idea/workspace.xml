@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9199d952-dc43-42d4-9c56-96568f8d4425" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/question_list_ctrl.py" afterPath="$PROJECT_DIR$/question_list_ctrl.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/status.ini" afterPath="$PROJECT_DIR$/status.ini" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,21 +24,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="status.ini" pinned="false" current-in-tab="false">
+      <file leaf-file-name="status.ini" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/status.ini">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="108">
-              <caret line="3" column="14" lean-forward="false" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+              <caret line="3" column="15" lean-forward="false" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="196" column="18" lean-forward="false" selection-start-line="196" selection-start-column="18" selection-end-line="196" selection-end-column="18" />
+            <state relative-caret-position="288">
+              <caret line="198" column="20" lean-forward="true" selection-start-line="198" selection-start-column="20" selection-end-line="198" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -78,9 +77,9 @@
         <option value="$PROJECT_DIR$/get_sim_questions.py" />
         <option value="$PROJECT_DIR$/data/output/done_part_0.json" />
         <option value="$PROJECT_DIR$/data/input/part_0.json" />
-        <option value="$PROJECT_DIR$/status.ini" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/question_list_ctrl.py" />
+        <option value="$PROJECT_DIR$/status.ini" />
       </list>
     </option>
   </component>
@@ -522,7 +521,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46095446" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1641791" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1641791" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -735,18 +734,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/status.ini">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="3" column="14" lean-forward="false" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+        <state relative-caret-position="288">
+          <caret line="198" column="20" lean-forward="true" selection-start-line="198" selection-start-column="20" selection-end-line="198" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
+    <entry file="file://$PROJECT_DIR$/status.ini">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="196" column="18" lean-forward="false" selection-start-line="196" selection-start-column="18" selection-end-line="196" selection-end-column="18" />
+        <state relative-caret-position="108">
+          <caret line="3" column="15" lean-forward="false" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
           <folding />
         </state>
       </provider>
