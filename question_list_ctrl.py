@@ -5,12 +5,14 @@ import wx
 
 
 class QuestionListCtrl(wx.ListCtrl):
-    def __init__(self, parent, subDatas, size, id=-1, pos=(0, 0), style=wx.LC_SMALL_ICON):
-        wx.ListCtrl.__init__(self, parent, id, pos, size, style)
+    def __init__(self, parent, subDatas, size, id=-1, pos=(0, 0)):
+        wx.ListCtrl.__init__(self, parent, id, pos, size,
+                             style=wx.LC_SMALL_ICON)
         self.SetColumnWidth(0, 500)
         self.subDatas = subDatas
         self.InitUI()
         pass
+
 
     def InitUI(self):
         self.ShowListDatas(self.subDatas)
@@ -18,10 +20,14 @@ class QuestionListCtrl(wx.ListCtrl):
 
     def ShowListDatas(self, datas):
         self.subDatas = datas
+        font = wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+        self.SetFont(font)
+
         for index in range(len(self.subDatas)):
             subject = self.subDatas[index]
             content = subject.get('simques', '')
-            self.InsertItem(index, content, 0)
+            self.InsertItem(index, content)
+
 
     def refreshDataShow(self, newDatas):
         self.datas = newDatas
