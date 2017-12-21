@@ -8,7 +8,7 @@ class QuestionListCtrl(wx.ListCtrl):
     def __init__(self, parent, subDatas, size, id=-1, pos=(0, 0)):
         wx.ListCtrl.__init__(self, parent, id, pos, size,
                              style=wx.LC_SMALL_ICON)
-        self.SetColumnWidth(0, 500)
+        self.SetColumnWidth(0, 550)
         self.subDatas = subDatas
         self.InitUI()
         pass
