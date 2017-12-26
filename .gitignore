@@ -1,4 +1,3 @@
-
 .idea/workspace.xml
 .idea/workspace.xml
 .idea/workspace.xml
@@ -7,9 +6,14 @@
 status.ini
 .idea/workspace.xml
 __pycache__/question_list_ctrl.cpython-36.pyc
+__pycache__/getBaiduZhidao.cpython-36.pyc
+__pycache__/getBaiduZhidao.cpython-36.pyc
 *.pyc
 *.xml
 *.xml
 /__pycache__
 /.idea
 .idea/workspace.xml
+*.pyc
+*.pyc
+status.ini
