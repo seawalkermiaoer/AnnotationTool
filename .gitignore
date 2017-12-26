@@ -15,3 +15,5 @@ __pycache__/question_list_ctrl.cpython-36.pyc
 .idea/workspace.xml
 *.ini
 *.xml
+status.ini
+status.ini
