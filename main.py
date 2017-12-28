@@ -137,6 +137,9 @@ class TagFrame(wx.Frame):
         print('exit')
         """Close the frame, terminating the application."""
         with open('status.ini', 'w') as configfile:
+            # print(self.input_path)
+            # print(self.size)
+            # print(self.done_index)
             if 'default' not in self.cf.sections():
                 self.cf.add_section('default')
             self.cf['default'] = {
