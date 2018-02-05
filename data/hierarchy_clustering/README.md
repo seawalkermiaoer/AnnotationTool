@@ -1,2 +1,0 @@
-聚类过程已经训练好，聚类过程文件为data_link.npy。
-hierarchy_clustering.py中的stop_point变量控制聚类的程度。

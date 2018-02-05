@@ -11,7 +11,7 @@ def persist(path, content):
         fo.write(tmp + '\n')
 
 if __name__ == '__main__':
-    for i in range(0, 100):
+    for i in range(0, 29):
         with open('data/to_be_labelled/part_%d.json' % i, mode='r', encoding='utf-8') as fi:
             lines = fi.readlines()
             status = {
